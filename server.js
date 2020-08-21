@@ -8,7 +8,7 @@ const { errorHandler } = require('./tools/tools');
 const jsonParser = bodyParser.json();
 app = express();
 app.use(jsonParser);
-
+app.use(express.static('public'));
 app.use(cors);
 app.use('/api',router);
 app.use(errorHandler);
