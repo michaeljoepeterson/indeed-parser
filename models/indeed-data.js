@@ -1,4 +1,6 @@
 const {BASE_URL} = require('../config');
+const cheerio = require('cheerio'); 
+const axios = require('axios');
 
 class IndeedData{
     jobtitle = null;
@@ -12,6 +14,13 @@ class IndeedData{
     longitude = null;
     wage = null;
     baseUrl = BASE_URL;
+    description = null;
+
+    companyChecks = ['span[class=icl-u-textColor--success]','.icl-u-xs-mr--xs > a',{
+        selector:'.jobsearch-DesktopStickyContainer-companyrating',
+        child:0
+    }];
+    descriptionChecks = ['#jobDescriptionText']
 
     constructor(item$){
         this.extractData(item$);
@@ -36,6 +45,97 @@ class IndeedData{
         }
         this.formattedLocation = item$.nextAll('.location').html();
         this.date = item$.nextAll('.date').html();
+    }
+    //to do combine functions
+    checkCompany = ($) =>{
+        let company = null;
+
+        for(let i = 0;i < this.companyChecks.length;i++){
+            let checkString = this.companyChecks[i];
+            let companyFound = null;
+            if(typeof checkString === 'string'){
+                companyFound = $(checkString).text();
+            }
+            else{
+                let parent = $(checkString.selector);
+                if(checkString.child === 0){
+                    companyFound = parent.children().first().text();
+                }
+            }
+            
+            if(companyFound && companyFound !== ''){
+                company = companyFound;
+                return company;
+            }
+        }
+
+        return company;
+    }
+
+    escapeChars = (text) => {
+        return text.replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    checkDescription = ($) => {
+        let description = null;
+
+        for(let i = 0;i < this.descriptionChecks.length;i++){
+            let checkString = this.descriptionChecks[i];
+            let descriptionFound = null
+            if(typeof checkString === 'string'){
+                description = $(checkString).html();
+            }
+            else{
+
+            }
+
+            if(descriptionFound && descriptionFound !== ''){
+                description = descriptionFound;
+                return description;
+            }
+
+        }
+        description = this.escapeChars(description);
+
+        return description;
+    }
+
+    findData = async () => {
+        try{
+            if(this.url){
+                let response = await axios.get(this.url);
+                let cleanedData = response.data.trim().replace(/\r?\n|\r/g,'');
+                const $ = cheerio.load(cleanedData);
+
+                this.company = this.checkCompany($);
+                this.description = this.checkDescription($);
+            }
+            else{
+                throw 'No Url';
+            }
+        }
+        catch(err){
+            throw(err);
+        }
+        
+    }
+
+    serialize = () => {
+        return {
+            jobtitle:this.jobtitle,
+            company:this.company,
+            formattedLocation:this.formattedLocation,
+            date:this.date,
+            url:this.url,
+            latitude:this.latitude,
+            longitude:this.longitude,
+            wage:this.wage,
+            description:this.description
+        };
     }
 }
 
