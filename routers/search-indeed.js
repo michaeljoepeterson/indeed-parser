@@ -6,6 +6,7 @@ const {IndeedData} = require('../models/indeed-data');
 router.get('/',async (req,res,next) => {
     let defaultQuery = 'q=security+guard&l=Edmonton%2C+AB&radius=25&start=30'
     let {city,province,radius,page} = req.query;
+    console.log(req.query);
     let query = !city ? defaultQuery : `q=security+guard&l=${city}+${province}&radius=${radius}&start=${page}`;
     let url = `https://ca.indeed.com/m/jobs?${query}`;
     try{
