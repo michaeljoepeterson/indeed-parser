@@ -49,10 +49,8 @@ class GeonamesInterface{
                     //console.log(data.geonames);
                     names = await Promise.all(data.geonames.map(async (district)=>{
                         let id = district.geonameId;
-                        console.log('getting next cities: ');
                         let cities = await this.getChildren(id);
                         allNames = allNames.concat(cities);
-                        console.log(id,allNames);
                     }));
                     allNames = allNames.sort();
                     allNames = allNames.filter((value, index, self) => self.indexOf(value) === index);

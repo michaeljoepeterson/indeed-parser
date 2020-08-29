@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const {GeonamesInterface} = require('../models/geonames');
+const {Wikipedia} = require('../models/wikipedia');
 const NodeCache = require( "node-cache" );
 let timeOutDefault = (60 * 1000) * 15;
 let checkPeriod = (60 * 1000) * 20;
@@ -66,6 +67,7 @@ router.get('/provinces',async (req,res,next) => {
 router.get('/cities',async (req,res,next) => {
     let {name} = req.query;
     let geonames = new GeonamesInterface();
+    let wiki = new Wikipedia();
     let existingCities = myCache.get(name);
     if(existingCities){
         return res.json({
@@ -75,9 +77,10 @@ router.get('/cities',async (req,res,next) => {
         });
     }
     try{
-        let id = await geonames.getProvince(name);
-        let isBc = name.toLowerCase() === 'british columbia' ? true:false;
-        let cities = await geonames.getChildren(id,isBc);
+        //let id = await geonames.getProvince(name);
+        //let isBc = name.toLowerCase() === 'british columbia' ? true:false;
+        //let cities = await geonames.getChildren(id,isBc);
+        let cities = await wiki.findCities(name);
         myCache.set( name, cities );
         return res.json({
             code:200,
