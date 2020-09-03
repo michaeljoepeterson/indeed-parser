@@ -12,8 +12,14 @@ function initSearches(){
         searchContainerId:'city-search',
         results:['Edmonton','Calgary']
     };
+
+    let provinceOptions = {
+        label:"Province",
+        searchContainerId:'provinces-search',
+        results:['Alberta','BC','Manitoba']
+    };
     var citySearch = new SearchList(cityOptions);
-    //var provinceSearch = new SearchList();
+    var provinceSearch = new SearchList(provinceOptions);
 }
 
 function initPage(){
