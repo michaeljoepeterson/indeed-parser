@@ -1,5 +1,5 @@
 function JobSearch(options){
-    this.constructor(options)
+    this.constructor(options);
 }
 
 JobSearch.prototype.constructor = function(options){

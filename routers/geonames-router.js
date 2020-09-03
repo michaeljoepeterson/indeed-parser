@@ -66,7 +66,7 @@ router.get('/provinces',async (req,res,next) => {
 
 router.get('/cities',async (req,res,next) => {
     let {name} = req.query;
-    let geonames = new GeonamesInterface();
+    //let geonames = new GeonamesInterface();
     let wiki = new Wikipedia();
     let existingCities = myCache.get(name);
     if(existingCities){
