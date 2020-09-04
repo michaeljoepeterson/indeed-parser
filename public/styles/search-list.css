@@ -1,6 +1,8 @@
 .search-list-container{
     display:flex;
     margin-bottom: 8em;
+    justify-content: center;
+    align-items: baseline;
 }
 
 .search-list-container > .search-controls{
@@ -50,4 +52,8 @@
 
 .search-icon{
     transition: all 500ms;
+}
+
+.search-label{
+    margin-right: 1em;
 }

@@ -10,6 +10,9 @@ SearchList.prototype.constructor = function(options){
     this.label = options.label ? options.label : null;
     //debugger;
     this.isFocused = false;
+    this.debounceTime = 800;
+    this.debounceTimeout = null;
+    this.listUpdateEvent = 'listUpdated';
 
     this.initList();
     this.initEventListeners();
@@ -18,13 +21,22 @@ SearchList.prototype.constructor = function(options){
 SearchList.prototype.initEventListeners = function(){
     let input = $(this.searchContainer).find('input');
 
-    input.focus(function(){
-        this.focused();
+    input.focus(function(event){
+        this.focused(event);
     }.bind(this));
 
-    input.blur(function(){
-        this.blured();
+    input.blur(function(event){
+        this.blured(event);
     }.bind(this));
+
+    $(document).keydown(function(event){
+        this.filterResults(event);
+    }.bind(this));
+
+    $(this.searchContainer).on(this.listUpdateEvent,function(event,custData){
+        console.log('updated list',event);
+        console.log('updated list',custData);
+    });
 }
 
 SearchList.prototype.buildPlaceholderText = function(){
@@ -34,7 +46,7 @@ SearchList.prototype.buildPlaceholderText = function(){
 //build initial input
 SearchList.prototype.initList = function(){
     let labelId = this.searchId + '-input';
-    let labelElement = $('<label></label');
+    let labelElement = $('<label class="search-label"></label');
     labelElement.attr('id',labelId);
     labelElement.text(this.label);
 
@@ -72,13 +84,36 @@ SearchList.prototype.buildResults = function(){
     return items;
 }
 
-SearchList.prototype.filterResults = function(){
+SearchList.prototype.filterList = function(){
+    clearInterval(this.debounceInterval);
+    console.log('done typing');
+    let data = {
+        results:'hi'
+    };
+    $(this.searchContainer).trigger(this.listUpdateEvent,data);
+}
 
+SearchList.prototype.filterResults = function(event){
+    if(this.isFocused){
+        console.log('key down');
+        //set initial event
+        if(!this.debounceTimeout){
+            this.debounceTimeout = setTimeout(function(){
+                this.filterList();
+            }.bind(this),this.debounceTime);
+        }
+        else{
+            clearInterval(this.debounceTimeout);
+            this.debounceTimeout = setTimeout(function(){
+                this.filterList();
+            }.bind(this),this.debounceTime);
+        }
+    }
 }
 
 //pulse color change on click
 //also transform placeholder by adding class
-SearchList.prototype.focused = function(){
+SearchList.prototype.focused = function(event){
     this.isFocused = true;
     let icon = $(this.searchContainer).find('i');
     icon.addClass('opened-icon');
@@ -89,7 +124,7 @@ SearchList.prototype.focused = function(){
     
 }
 
-SearchList.prototype.blured = function(){
+SearchList.prototype.blured = function(event){
     this.isFocused = false;
     let icon = $(this.searchContainer).find('i');
     icon.removeClass('opened-icon');
@@ -102,5 +137,5 @@ SearchList.prototype.blured = function(){
 //adjust search list margin bottom to ensure enough space is after input
 //of search list container
 SearchList.prototype.adjustListMargin = function(){
-
+    
 }
