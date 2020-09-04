@@ -12,10 +12,19 @@ SearchList.prototype.constructor = function(options){
     this.isFocused = false;
 
     this.initList();
+    this.initEventListeners();
 }
 
 SearchList.prototype.initEventListeners = function(){
+    let input = $(this.searchContainer).find('input');
 
+    input.focus(function(){
+        this.focused();
+    }.bind(this));
+
+    input.blur(function(){
+        this.blured();
+    }.bind(this));
 }
 
 SearchList.prototype.buildPlaceholderText = function(){
@@ -35,8 +44,8 @@ SearchList.prototype.initList = function(){
     searchInput.attr('placeholder',placeholderText);
     searchInput.attr('id',labelId);
 
-    let icon = $('<i class="material-icons">expand_more</i>');
-    let seachListContent = $('<div class="search-list-content"></div>');
+    let icon = $('<i class="material-icons search-icon">expand_more</i>');
+    let seachListContent = $('<div class="search-list-content hide-search"></div>');
     let searchResults = $('<ul class="search-results"></ul>');
     let items = this.buildResults();
 
@@ -69,8 +78,26 @@ SearchList.prototype.filterResults = function(){
 
 //pulse color change on click
 //also transform placeholder by adding class
-SearchList.prototype.highlight = function(){
+SearchList.prototype.focused = function(){
     this.isFocused = true;
+    let icon = $(this.searchContainer).find('i');
+    icon.addClass('opened-icon');
+    let input = $(this.searchContainer).find('input');
+    input.addClass('highlighted');
+    let searchList = $(this.searchContainer).find('.search-list-content');
+    searchList.removeClass('hide-search');
+    
+}
+
+SearchList.prototype.blured = function(){
+    this.isFocused = false;
+    let icon = $(this.searchContainer).find('i');
+    icon.removeClass('opened-icon');
+    let input = $(this.searchContainer).find('input');
+    input.removeClass('highlighted');
+    let searchList = $(this.searchContainer).find('.search-list-content');
+    searchList.addClass('hide-search');
+    
 }
 //adjust search list margin bottom to ensure enough space is after input
 //of search list container
