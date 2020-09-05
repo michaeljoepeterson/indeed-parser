@@ -23,6 +23,7 @@
     transition: all 500ms;
     max-height: 35vh;
     overflow-y: scroll;
+    z-index: 100;
 }
 
 .indeed-results{
