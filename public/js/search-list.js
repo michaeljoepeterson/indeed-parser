@@ -5,6 +5,9 @@ function SearchList(options){
 SearchList.prototype.constructor = function(options){
     //toggle for checking if input is highlighted
     this.results = options.results ? this.normalizeResults(options.results) : null;
+    if(!this.results){
+        return;
+    }
     this.searchId = options.searchContainerId ? options.searchContainerId : null;
     this.searchContainer = options.searchContainerId ? $('#' + options.searchContainerId)[0] : null;
     this.label = options.label ? options.label : null;
@@ -21,9 +24,15 @@ SearchList.prototype.constructor = function(options){
         escape:'escape'
     };
     this.listSelector = '.search-results > li';
-
+    this.selectListener = options.selectListener ? options.selectListener : null;
+    this.selectChangedEvent = 'selectChanged';
+    this.clearList();
     this.initList();
     this.initEventListeners();
+}
+
+SearchList.prototype.clearList = function(){
+    $(this.searchContainer).empty();
 }
 
 SearchList.prototype.normalizeResults = function(results){
@@ -69,6 +78,15 @@ SearchList.prototype.initEventListeners = function(){
         //console.log('updated list',custData);
         this.resetHighlighted();
         this.renderResults();
+    }.bind(this));
+
+    $(this.searchContainer).on(this.selectChangedEvent,function(event,custData){
+        //console.log('updated list',event);
+        //console.log('updated list',custData);
+        if(this.selectListener){
+            this.selectListener(event,custData);
+        }
+
     }.bind(this));
 }
 
@@ -339,4 +357,9 @@ SearchList.prototype.itemClicked = function(index){
     let input = $(this.searchContainer).find('input');
     input.val(itemText);
     this.filterList(null,itemText);
+    let data = {
+        value:itemText
+    };
+
+    $(this.searchContainer).trigger(this.selectChangedEvent,data);
 }

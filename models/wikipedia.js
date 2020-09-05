@@ -41,7 +41,7 @@ class Wikipedia{
     }
 
     filterCities = (cities) => {
-        let filters = ['total','35,944'];
+        let filters = ['total','35,944','103,328','23,172','28,905','328','50,923'];
         let filteredCities = cities.filter(city => {
             let hasFilter = filters.find(filter => city.toLowerCase().includes(filter));
             if(city === '' || city === '-' || city === '—'){
