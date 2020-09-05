@@ -124,7 +124,6 @@ SearchList.prototype.handleKeyUp = function(){
             this.filteredResults[currentIndex].highlighted = true; 
         }
         else{
-            currentIndex = highlightedIndex - 1;
             this.filteredResults[currentIndex].highlighted = true;
         }
     }
@@ -137,7 +136,26 @@ SearchList.prototype.handleKeyUp = function(){
 }
 
 SearchList.prototype.handleKeyDown = function(){
-
+    let highlightedIndex = this.filteredResults.findIndex(result => result.highlighted);
+    let currentIndex = 0;
+    let lastIndex = this.filteredResults.length - 1;
+    if(highlightedIndex <= lastIndex){
+        //circle to top
+        currentIndex = highlightedIndex + 1;
+        if(currentIndex > lastIndex){
+            currentIndex = 0;
+            this.filteredResults[currentIndex].highlighted = true; 
+        }
+        else{
+            this.filteredResults[currentIndex].highlighted = true;
+        }
+    }
+    else{
+        currentIndex = 0;
+        this.filteredResults[currentIndex].highlighted = true;
+    }
+    this.resetHighlighted(currentIndex)
+    this.highlightItems();
 }
 
 SearchList.prototype.controlDropdown = function(event){

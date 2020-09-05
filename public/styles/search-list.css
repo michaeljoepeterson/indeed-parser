@@ -37,7 +37,7 @@
 }
 
 .search-results > li.highlighted{
-    background-color: red;
+    background-color: #cce6ff;
 }
 
 .search-list-input::placeholder {
