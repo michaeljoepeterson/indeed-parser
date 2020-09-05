@@ -29,6 +29,7 @@
 
 .search-results{
     padding: 0;
+    margin:0;
 }
 
 .search-results > li{
@@ -37,7 +38,11 @@
 }
 
 .search-results > li.highlighted{
-    background-color: #cce6ff;
+    background-color: 	rgba(204, 230, 255,0.8);
+}
+
+.search-results > li:hover{
+    cursor: pointer;
 }
 
 .search-list-input::placeholder {

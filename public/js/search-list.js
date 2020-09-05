@@ -20,6 +20,7 @@ SearchList.prototype.constructor = function(options){
         enter:'enter',
         escape:'escape'
     };
+    this.listSelector = '.search-results > li';
 
     this.initList();
     this.initEventListeners();
@@ -99,7 +100,7 @@ SearchList.prototype.buildPlaceholderText = function(){
 
 SearchList.prototype.highlightItems = function(){
     let highlightedClass ='highlighted';
-    let items = $(this.searchContainer).find('.search-results > li');
+    let items = $(this.searchContainer).find(this.listSelector);
     let highlightedIndex = this.filteredResults.findIndex(result => result.highlighted);
     $(items[highlightedIndex]).addClass(highlightedClass);
     for(let i = 0;i < items.length;i++){
@@ -158,6 +159,22 @@ SearchList.prototype.handleKeyDown = function(){
     this.highlightItems();
 }
 
+SearchList.prototype.handleEnter = function(){
+    let highlighted = 'highlighted';
+    let items = $(this.searchContainer).find(this.listSelector);
+    let highlightedIndex = -1;
+    for(let i = 0;i < items.length;i++){
+        let item$ = $(items[i]);
+        if(item$.hasClass(highlighted)){
+            highlightedIndex = i;
+            break;
+        }
+    }
+    if(highlightedIndex >= 0){
+        this.itemClicked(highlightedIndex);
+    }
+}
+
 SearchList.prototype.controlDropdown = function(event){
     if(this.isFocused){
         const keyUp = 'arrowup';
@@ -175,6 +192,7 @@ SearchList.prototype.controlDropdown = function(event){
                 this.handleKeyDown();
                 break;
             case enter:
+                this.handleEnter();
                 break;
             case escape:
                 this.blured();
@@ -219,10 +237,17 @@ SearchList.prototype.buildResults = function(){
         var result = this.filteredResults[i].value;
         var item = $('<li class="search-item"></li>');
         item.text(result);
+        this.addItemEvent(item,i)
         items.push(item);
     }
 
     return items;
+}
+
+SearchList.prototype.addItemEvent = function(item,i){
+    item.click(event => {
+        this.itemClicked(i);
+    });
 }
 
 //render result list
@@ -233,10 +258,11 @@ SearchList.prototype.renderResults = function(){
     searchResults.append(items);
 }
 
-SearchList.prototype.filterList = function(event){
+SearchList.prototype.filterList = function(event,value){
     clearInterval(this.debounceInterval);
     this.filteredResults = [];
-    var inputText = $(event.target).val().toLowerCase();
+    var inputText = value ? value.toLowerCase() : $(event.target).val().toLowerCase();
+
     if(inputText === ''){
         this.filteredResults = this.results;
     }
@@ -304,6 +330,13 @@ SearchList.prototype.adjustListMargin = function(){
     
 }
 //handle selecting a item from the dropdown list
-SearchList.prototype.itemClicked = function(){
-    
+SearchList.prototype.itemClicked = function(index){
+    this.filteredResults[index].highlighted = true;
+    this.resetHighlighted(index);
+    this.highlightItems();
+    let items = $(this.searchContainer).find(this.listSelector);
+    let itemText = $(items[index]).text();
+    let input = $(this.searchContainer).find('input');
+    input.val(itemText);
+    this.filterList(null,itemText);
 }
