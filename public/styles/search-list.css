@@ -28,12 +28,18 @@
 }
 
 .search-results{
-    padding: 0 1em;
+    padding: 0;
 }
 
 .search-results > li{
     list-style-type: none;
+    padding: 0 1em;
 }
+
+.search-results > li.highlighted{
+    background-color: red;
+}
+
 .search-list-input::placeholder {
     transition: all 500ms;
 }
