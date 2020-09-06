@@ -18,7 +18,9 @@ class JobList {
         this.currentPage = 0;
         this.addScrollListener();
         this.jobCardsContainer = '.job-cards';
-        this.loader = $(".loader-container");
+        //this.loader = $(".loader-container");
+        this.loadStartEvent = options.loadStartEvent ? options.loadStartEvent : 'jobsLoading';
+        this.loadDoneEvent = options.loadDoneEvent ? options.loadDoneEvent : 'jobsDone';
         this.hideClass = "hide";
         this.gettingJobs = false;
         this.lastPage = 2;
@@ -36,7 +38,8 @@ class JobList {
         if (this.currentPage <= this.lastPage) {
             var self = this;
             //will need to add this to get jobs in prod
-            this.loader.removeClass(this.hideClass);
+            //this.loader.removeClass(this.hideClass);
+            
             setTimeout(function () {
                 self.getJobs(self.currentPage, true);
             }, 3000);
@@ -206,6 +209,7 @@ class JobList {
     getJobs(page, addPage) {
 
         if (!this.gettingJobs) {
+            $(document).trigger(this.loadStartEvent);
             this.gettingJobs = true;
 
             let defaultUrl = '/api/search?q=security+guard&l=Edmonton%2C+AB&radius=25&start=30';
@@ -228,13 +232,15 @@ class JobList {
                         this.mapInterface = new MapInterface(this.mapOptions);
                     }
                     this.currentPage++;
-                    this.loader.addClass(this.hideClass);
+                    $(document).trigger(this.loadDoneEvent);
+                    //this.loader.addClass(this.hideClass);
                     this.gettingJobs = false;
                 })
 
                 .catch(err => {
                     console.log('Error getting data: ', err);
-                    this.loader.addClass(this.hideClass);
+                    $(document).trigger(this.loadDoneEvent);
+                    //this.loader.addClass(this.hideClass);
                     this.gettingJobs = false;
                 });
         }

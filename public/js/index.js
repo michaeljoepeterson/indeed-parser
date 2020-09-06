@@ -5,9 +5,31 @@ class JobSearchApp{
     jobSearch;
 
     constructor(){
+        this.loader = $(".loader-container");
+        this.loadStartEvent = 'jobsLoading';
+        this.loadDoneEvent = 'jobsDone';
         this.initJobList();
         this.initSearches();
         this.initSubmit();
+        this.initLoader();
+    }
+
+    initLoader = () => {
+        $(document).on(this.loadStartEvent,(event) => {
+            this.jobsLoading();
+        });
+
+        $(document).on(this.loadDoneEvent,(event) => {
+            this.jobsDone();
+        });
+    }
+
+    jobsLoading = () => {
+        this.loader.removeClass('hide');
+    }
+
+    jobsDone = () => {
+        this.loader.addClass('hide');
     }
 
     submitSearch= (event) => {
