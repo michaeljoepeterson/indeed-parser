@@ -7,6 +7,7 @@ class JobList {
         //wrap selected dom element in $ to make $ object available to class
         this.parent = $($(parentSelector)[0]);
         this.mapOptions = options.mapOptions;
+        this.urlOptions = options.urlOptions ? options.urlOptions : null;
         this.mapInterface;
         this.jobIndex = 'job-index';
         this.jobData = [];
@@ -193,13 +194,18 @@ class JobList {
         }
 
     }
+    buildUrl(){
+        let url = `/api/search?city=${this.urlOptions.city}&province=${this.urlOptions.province}&radius=25&page=0`;
+        return url;
+    }
     //placeholder for ajax calls
     //need seperate function for appending jobs
     getJobs(page, addPage) {
 
         if (!this.gettingJobs) {
             this.gettingJobs = true;
-            let url = '/api/search?q=security+guard&l=Edmonton%2C+AB&radius=25&start=30';
+            let defaultUrl = '/api/search?q=security+guard&l=Edmonton%2C+AB&radius=25&start=30';
+            let url = this.urlOptions ? this.buildUrl() : defaultUrl;
             if (page) {
                 //url += '?page=' + page;
             }

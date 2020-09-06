@@ -9,7 +9,7 @@
         <link rel="stylesheet" href="styles/jobs.css">
     </head>
     <body>
-        <form class="row search-container">
+        <form class="row search-container" autocomplete="off">
             <div class="col-lg-3">
                 <div class="search-list-container" id="provinces-search">
                 </div>
@@ -20,7 +20,7 @@
             </div>
             <div class="col-lg-3">
                 <label>Radius</label>
-                <input type="number" min="25" max="400">
+                <input id="radius" type="number" min="25" max="400" value="25">
             </div>
             <div class="col-lg-3">
                 <button class="btn btn-primary" type="submit">Search</button>

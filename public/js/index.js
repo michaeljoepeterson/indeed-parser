@@ -12,7 +12,12 @@ class JobSearchApp{
 
     submitSearch= (event) => {
         event.preventDefault();
-        console.log(event);
+        let province = this.provinceSearch.getValue();
+        let city = this.citySearch.getValue();
+        if(city && province){
+            this.initJobList(province,city);
+        }
+        console.log(province,city);
     }
 
     initSubmit = () =>{
@@ -60,10 +65,18 @@ class JobSearchApp{
         }
     }
 
-    initJobList = () =>{
+    initJobList = (province,city) =>{
         let jobOptions = {
             jobResultsId:'indeed-results',
             parentClass:'job-list-container'
+        };
+        if(city && province){
+            let radius = $('#radius').val();
+            jobOptions.urlOptions = {
+                province,
+                city,
+                radius
+            }
         }
         
         this.jobSearch = new JobList(jobOptions);
@@ -86,7 +99,6 @@ class JobSearchApp{
 
 
 function initPage(){
-
     var app = new JobSearchApp();
 }
 

@@ -363,3 +363,8 @@ SearchList.prototype.itemClicked = function(index){
 
     $(this.searchContainer).trigger(this.selectChangedEvent,data);
 }
+
+SearchList.prototype.getValue = function(){
+    let value = $(this.searchContainer).find('input').val();
+    return value;
+}
