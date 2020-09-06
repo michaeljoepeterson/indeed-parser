@@ -9,6 +9,8 @@ class JobList {
         this.mapOptions = options.mapOptions;
         this.urlOptions = options.urlOptions ? options.urlOptions : null;
         this.mapInterface;
+        this.nextPageButton;
+        this.previousPageButton;
         this.jobIndex = 'job-index';
         this.jobData = [];
         this.descriptions = [];
