@@ -13,7 +13,7 @@ class JobList {
         this.jobData = [];
         this.descriptions = [];
         this.cardIndex = 0;
-        this.currentPage = 1;
+        this.currentPage = 0;
         this.addScrollListener();
         this.jobCardsContainer = '.job-cards';
         this.loader = $(".loader-container");
@@ -194,8 +194,9 @@ class JobList {
         }
 
     }
-    buildUrl(){
-        let url = `/api/search?city=${this.urlOptions.city}&province=${this.urlOptions.province}&radius=25&page=0`;
+    buildUrl(page){
+        let pageVal = page ? page * 10 : 0
+        let url = `/api/search?city=${this.urlOptions.city}&province=${this.urlOptions.province}&radius=25&page=${pageVal}`;
         return url;
     }
     //placeholder for ajax calls
@@ -204,11 +205,10 @@ class JobList {
 
         if (!this.gettingJobs) {
             this.gettingJobs = true;
+
             let defaultUrl = '/api/search?q=security+guard&l=Edmonton%2C+AB&radius=25&start=30';
-            let url = this.urlOptions ? this.buildUrl() : defaultUrl;
-            if (page) {
-                //url += '?page=' + page;
-            }
+            let url = this.urlOptions ? this.buildUrl(page) : defaultUrl;
+            
             var req = {
                 method: 'GET',
                 url: url
