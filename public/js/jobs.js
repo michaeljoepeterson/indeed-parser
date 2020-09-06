@@ -1,58 +1,3 @@
-
-/*
-class JobSearch {
-
-    constructor(options) {
-
-        this.resultContainer = $('#' + options.jobResultsId);
-        console.log('get jobs', this.resultContainer);
-        this.getJobs();
-    }
-    getJobs() {
-        let url = '/api/search?q=security+guard&l=Edmonton%2C+AB&radius=25&start=30';
-        let options = {
-            url
-        };
-
-        $.ajax(options)
-
-            .then(response => {
-                console.log('results: ', response);
-                try {
-                    this.buildResults(response.results);
-                }
-                catch (err) {
-                    console.log('error getting results after', response);
-                }
-            })
-
-            .catch(err => {
-                console.log('error getting results', err);
-            });
-    }
-    buildResults(jobs) {
-        for (let i = 0; i < jobs.length; i++) {
-            let job = jobs[i];
-            let jobeElement = this.buildJob(job);
-            $(this.resultContainer[0]).append(jobeElement);
-        }
-    }
-    buildJob(job) {
-        let jobElement = $('<div></div>');
-        let title = $('<p></p>');
-        title.text(job.jobtitle);
-        let company = $('<p></p>');
-        company.text(job.company);
-
-        jobElement.append(title);
-        jobElement.append(company);
-
-        return jobElement;
-    }
-}
-
-*/
-
 class JobList {
 
     addScrollListener() {
@@ -85,6 +30,22 @@ class JobList {
         var job = this.jobData[index];
         this.mapInterface.positionMap(job, index);
     }
+
+    buildShortDesc(decodedDesc){
+        let shortDesc = decodedDesc.slice(0,500);
+        let descChars = shortDesc.split('');
+        let lastPeriodIndex = 0;
+        descChars.forEach((char,i) => {
+            if(char === '.'){
+                lastPeriodIndex = i;
+            }
+        });
+        if(lastPeriodIndex !== 0){
+            shortDesc = shortDesc.slice(0,lastPeriodIndex + 1);
+        }
+        return shortDesc;
+    }
+
     buildSingleCard(cardData, index) {
         var card = $('<div class="row job-card"></div>');
         var titleContainer = $('<div class="job-card-titles col-sm-12 col-md-6"></div>');
@@ -98,7 +59,12 @@ class JobList {
         var jobDate = $('<p class="job-date"></p>');
         jobDate.text(cardData.date);
         var jobDesc = $('<p></p>');
-        jobDesc.text(cardData.snippet);
+        let description = cardData.snippet ? cardData.snippet : cardData.description;
+        let decodedDesc = jobDesc.html(description).text(); 
+        let shortDesc = this.buildShortDesc(decodedDesc);
+        jobDesc.html(shortDesc);
+        let wage = cardData.wage ? cardData.wage : null;
+        
         //build link
         jobLink.attr('href', cardData.url);
         jobLink.attr('target', '_blank');
@@ -107,6 +73,11 @@ class JobList {
         jobTitle.append(jobLink);
         titleContainer.append(jobTitle);
         titleContainer.append(jobCompany);
+        if(wage){
+            let wageData = $('<p class="job-wage"></p>'); 
+            wageData.text(wage);
+            titleContainer.append(wageData);
+        }
         titleContainer.append(jobLocation);
         titleContainer.append(jobDate);
         descContainer.append(jobDesc);
@@ -165,8 +136,10 @@ class JobList {
                     let data =response.results;
                     this.buildCards(data, addPage);
                     this.jobData = this.jobData.concat(data);
-                    //this.mapOptions.jobData = addPage ? this.jobData : response.data.results;
-                    //this.mapInterface = new MapInterface(this.mapOptions);
+                    if(this.useMap){
+                        this.mapOptions.jobData = addPage ? this.jobData : response.data.results;
+                        this.mapInterface = new MapInterface(this.mapOptions);
+                    }
                     this.currentPage++;
                     this.loader.addClass(this.hideClass);
                     this.gettingJobs = false;
