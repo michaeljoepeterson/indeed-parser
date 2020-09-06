@@ -20,7 +20,7 @@ class JobList {
         this.gettingJobs = false;
         this.lastPage = 2;
         this.jobModal = null;
-
+        this.parent.empty();
         this.render();
     }
 
@@ -110,7 +110,7 @@ class JobList {
                 </div>
             </div>
           </div>`);
-          $('body').append(this.jobModal);
+          this.parent.append(this.jobModal);
         }
     }
 
