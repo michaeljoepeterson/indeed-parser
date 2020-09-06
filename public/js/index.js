@@ -39,9 +39,10 @@ async function getProvinces(){
 
 function initJobList(){
     let jobOptions = {
-        jobResultsId:'indeed-results'
+        jobResultsId:'indeed-results',
+        parentClass:'job-list-container'
     }
-    var jobSearch = new JobSearch(jobOptions);
+    var jobSearch = new JobList(jobOptions);
 }
 
 

@@ -1,0 +1,123 @@
+/*display 1 styles */
+
+.job-list-container-1{
+    display:flex;
+    align-items: center;
+    justify-content: center;
+    width: 80%;
+    margin:auto;
+}
+
+.job-list-container{
+    display:flex;
+    align-items: center;
+    justify-content: center;
+    width: 80%;
+    margin:auto;
+}
+
+.job-card-1{
+    text-align: center;
+    border-bottom: 1px solid rgba(0,0,0,0.3);
+    width: 80%;
+}
+
+.job-card-1 > .row > .job-card-titles > .job-title{
+    font-weight: bold;
+    font-size:1.5em;
+}
+
+.job-card-1 > .row > .job-card-description{
+    display: flex;
+    align-items: center;
+}
+
+.job-cards{
+    text-align: center;
+    width: 80%;
+}
+
+.job-card{
+    border-bottom: 1px solid rgba(0,0,0,0.3);
+    cursor: pointer;
+}
+
+.job-card > .job-card-titles > .job-title{
+    font-weight: bold;
+    font-size:1.5em;
+}
+
+.job-card > .job-card-description{
+    display: flex;
+    align-items: center;
+}
+
+.job-card > .job-card-description > p{
+    text-align: start;
+}
+
+.info-window > h2,h4{
+    font-size: 1em;
+}
+
+#map {
+    height: 300px;
+    position: sticky !important;
+    top:0;
+    z-index: 100;
+}
+
+.hide{
+    display:none !important;
+}
+
+.loader-container{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.display-list{
+    display:flex;
+    justify-content:center;
+    align-items: center;
+    height: 50vh;
+    font-size: 30px;
+}
+
+.index-title{
+    text-align: center;
+    padding-top: 1.5em;
+}
+
+.loader {
+    border: 16px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 16px solid rgba(40, 44, 52, 0.64);
+    width: 120px;
+    height: 120px;
+    -webkit-animation: spin 2s linear infinite; /* Safari */
+    animation: spin 2s linear infinite;
+  }
+  
+  /* Safari */
+  @-webkit-keyframes spin {
+    0% { -webkit-transform: rotate(0deg); }
+    100% { -webkit-transform: rotate(360deg); }
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+@media (min-width: 1024px) {
+    #map {
+        width: 80%;
+        height: 500px;
+        margin:0 auto;
+    }
+    .info-window > h2,h4{
+        font-size: 2em;
+    }
+  }
