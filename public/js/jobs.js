@@ -1,4 +1,28 @@
 class JobList {
+    
+    constructor(options) {
+        this.title = "Simple List";
+        this.useMap = options.useMap ? true : false;
+        var parentSelector = options.parentClass.startsWith('.') ? options.parentClass : '.' + options.parentClass;
+        //wrap selected dom element in $ to make $ object available to class
+        this.parent = $($(parentSelector)[0]);
+        this.mapOptions = options.mapOptions;
+        this.mapInterface;
+        this.jobIndex = 'job-index';
+        this.jobData = [];
+        this.descriptions = [];
+        this.cardIndex = 0;
+        this.currentPage = 1;
+        this.addScrollListener();
+        this.jobCardsContainer = '.job-cards';
+        this.loader = $(".loader-container");
+        this.hideClass = "hide";
+        this.gettingJobs = false;
+        this.lastPage = 2;
+        this.jobModal = null;
+
+        this.render();
+    }
 
     addScrollListener() {
         $('#load-button').click(function (e) {
@@ -46,6 +70,50 @@ class JobList {
         return shortDesc;
     }
 
+    openDescriptionModal(index){
+        let selectedDescription = this.descriptions[index];
+        console.log(selectedDescription);
+        let job = this.jobData[index];
+        console.log(job);
+        let modal = $(this.jobModal);
+        var jobLink = modal.find('.job-modal-title');
+        jobLink.attr('href', job.url);
+        jobLink.attr('target', '_blank');
+        jobLink.text(job.jobtitle);
+
+        modal.find('.job-modal-company').html(job.company);
+        if(job.wage){
+            modal.find('.job-modal-wage').html(job.wage);
+        }
+        modal.find('.modal-body').html(selectedDescription.description);
+    }
+
+    buildModalContainer(){
+        if(!this.jobModal){
+            this.jobModal = $(`<div class="modal fade" id="jobModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <div class="job-modal-heder">
+                    <h5 class="modal-title" id="exampleModalLabel">
+                    <a class="job-modal-title"></a>
+                    </h5>
+                    <p class="job-modal-company"></p>
+                    <p class="job-modal-wage"></p>
+                  </div>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  ...
+                </div>
+            </div>
+          </div>`);
+          $('body').append(this.jobModal);
+        }
+    }
+
     buildSingleCard(cardData, index) {
         var card = $('<div class="row job-card"></div>');
         var titleContainer = $('<div class="job-card-titles col-sm-12 col-md-6"></div>');
@@ -64,7 +132,16 @@ class JobList {
         let shortDesc = this.buildShortDesc(decodedDesc);
         jobDesc.html(shortDesc);
         let wage = cardData.wage ? cardData.wage : null;
-        
+        var moreLinkContainer = $('<div class="more-link"></div>');
+        var moreLinkButton = $('<button type="button" class="btn btn-link" data-toggle="modal" data-target="#jobModal">More</button>');
+        moreLinkContainer.append(moreLinkButton);
+        moreLinkButton.click((event) => {
+            this.openDescriptionModal(index);
+        });
+        this.descriptions.push({
+            description:decodedDesc
+        });
+
         //build link
         jobLink.attr('href', cardData.url);
         jobLink.attr('target', '_blank');
@@ -81,6 +158,7 @@ class JobList {
         titleContainer.append(jobLocation);
         titleContainer.append(jobDate);
         descContainer.append(jobDesc);
+        descContainer.append(moreLinkContainer);
         //add to card
         card.append(titleContainer);
         card.append(descContainer);
@@ -105,6 +183,7 @@ class JobList {
                 this.initCardListener(card);
                 this.cardIndex++;
             }
+            this.buildModalContainer();
             if (!addPage) {
                 this.parent.append(jobCard);
             }
@@ -134,8 +213,8 @@ class JobList {
                 .then(response => {
                     console.log(response);
                     let data =response.results;
-                    this.buildCards(data, addPage);
                     this.jobData = this.jobData.concat(data);
+                    this.buildCards(data, addPage);
                     if(this.useMap){
                         this.mapOptions.jobData = addPage ? this.jobData : response.data.results;
                         this.mapInterface = new MapInterface(this.mapOptions);
@@ -153,38 +232,11 @@ class JobList {
         }
 
     }
-    constructor(options) {
-        this.title = "Simple List";
-        this.useMap = options.useMap ? true : false;
-        var parentSelector = options.parentClass.startsWith('.') ? options.parentClass : '.' + options.parentClass;
-        //wrap selected dom element in $ to make $ object available to class
-        this.parent = $($(parentSelector)[0]);
-        this.mapOptions = options.mapOptions;
-        this.mapInterface;
-        this.jobIndex = 'job-index';
-        this.jobData = [];
-        this.cardIndex = 0;
-        this.currentPage = 1;
-        this.addScrollListener();
-        this.jobCardsContainer = '.job-cards';
-        this.loader = $(".loader-container");
-        this.hideClass = "hide";
-        this.gettingJobs = false;
-        this.lastPage = 2;
-        this.render();
-    }
     render() {
         console.log(this.title);
         this.getJobs();
     }
 }
-
-
-
-
-
-
-
 
 
 
