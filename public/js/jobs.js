@@ -17,16 +17,21 @@ class JobList {
         this.cardIndex = 0;
         this.currentPage = 0;
         this.addScrollListener();
-        this.jobCardsContainer = '.job-cards';
+        this.jobCardsContainerClass = '.job-cards';
+        this.jobCardsContainer = null;
         //this.loader = $(".loader-container");
         this.loadStartEvent = options.loadStartEvent ? options.loadStartEvent : 'jobsLoading';
         this.loadDoneEvent = options.loadDoneEvent ? options.loadDoneEvent : 'jobsDone';
         this.hideClass = "hide";
         this.gettingJobs = false;
-        this.lastPage = 2;
+        this.pageRange = 5;
         this.jobModal = null;
-        this.parent.empty();
+        
         this.render();
+    }
+
+    resetContianer(){
+        this.parent.empty();
     }
 
     addScrollListener() {
@@ -34,17 +39,16 @@ class JobList {
             this.loadJobs();
         }.bind(this));
     }
+
     loadJobs() {
-        if (this.currentPage <= this.lastPage) {
-            var self = this;
-            //will need to add this to get jobs in prod
-            //this.loader.removeClass(this.hideClass);
-            
-            setTimeout(function () {
-                self.getJobs(self.currentPage, true);
-            }, 3000);
-        }
+        var self = this;
+        
+        setTimeout(function () {
+            self.getJobs(self.currentPage, true);
+        }, 3000);
+    
     }
+
     initCardListener(card) {
         var self = this;
         //remove any existing click listeners
@@ -56,6 +60,7 @@ class JobList {
             }
         });
     }
+
     setJobPosition(index) {
         var job = this.jobData[index];
         this.mapInterface.positionMap(job, index);
@@ -172,26 +177,66 @@ class JobList {
         card.attr('data-' + this.jobIndex, index);
         return card;
     }
+
+    initPageListeners(pageContainer){
+
+    }
+
+    addPageNumbers(pageContainer){
+        const numbersClass = '.page-numbers'
+        let numbersContainer = pageContainer.find(numbersClass);
+        for(let i = this.currentPage + 1;i < this.currentPage + this.pageRange;i++){
+            let button = $(`<button type="button" class="btn btn-link" data-page=${i}>${i}</button>`);
+            numbersContainer.append(button);
+        }
+    }
+
+    buildPagination(parent){
+        let pageContainer = $(`
+        <div class="page-container">
+            <div class="previous-page">
+                <button class="btn btn-light" id="load-button">
+                    <i class="material-icons">
+                        chevron_left
+                    </i>
+                </button>
+            </div>
+            <div class="page-numbers">
+            </div>
+            <div class="next-page">
+                <button class="btn btn-light" id="load-button">
+                    <i class="material-icons">
+                        chevron_right
+                    </i>
+                </button>
+            </div>
+        </div>`);
+        this.addPageNumbers(pageContainer);
+
+        parent.append(pageContainer);
+    }
+
+    changePage(page){
+
+    }
+
     buildCards(data, addPage) {
         try {
-            var jobCard = $('<div class="job-cards"></div>');
-            let jobCards = addPage ? $(this.jobCardsContainer) : null;
+            if(!this.jobCardsContainer){
+                this.jobCardsContainer = $('<div class="job-cards"></div>');
+            }
+            
             for (var i = 0; i < data.length; i++) {
                 var cardData = data[i];
                 var card = this.buildSingleCard(cardData, this.cardIndex);
-
-                if (addPage) {
-                    jobCards.append(card);
-                }
-                else {
-                    jobCard.append(card);
-                }
+                this.jobCardsContainer.append(card);
                 this.initCardListener(card);
                 this.cardIndex++;
             }
             this.buildModalContainer();
+            this.buildPagination(this.jobCardsContainer);
             if (!addPage) {
-                this.parent.append(jobCard);
+                this.parent.append(this.jobCardsContainer);
             }
         }
         catch (err) {
@@ -199,6 +244,7 @@ class JobList {
         }
 
     }
+
     buildUrl(page){
         let pageVal = page ? page * 10 : 0
         let url = `/api/search?city=${this.urlOptions.city}&province=${this.urlOptions.province}&radius=25&page=${pageVal}`;
@@ -248,6 +294,7 @@ class JobList {
     }
     render() {
         console.log(this.title);
+        this.resetContianer();
         this.getJobs();
     }
 }
