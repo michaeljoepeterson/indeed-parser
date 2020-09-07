@@ -1,12 +1,3 @@
-/*display 1 styles */
-
-.job-list-container-1{
-    display:flex;
-    align-items: center;
-    justify-content: center;
-    width: 80%;
-    margin:auto;
-}
 
 .job-list-container{
     display:flex;
@@ -14,6 +5,7 @@
     justify-content: center;
     width: 80%;
     margin:auto;
+    padding-bottom: 1em;
 }
 
 .job-card-1{
@@ -115,6 +107,11 @@
 .page-container{
     display: flex;
     justify-content: space-between;
+}
+
+.current-page{
+    font-weight: bold;
+    border-bottom: 1px solid;
 }
 
   /* Safari */
