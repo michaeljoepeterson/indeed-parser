@@ -26,6 +26,7 @@ class JobList {
         this.gettingJobs = false;
         this.pageRange = 5;
         this.jobModal = null;
+        this.shortList = options.shortList ? options.shortList : false;
         
         this.render();
     }
@@ -282,7 +283,9 @@ class JobList {
                 //this.cardIndex++;
             }
             this.buildModalContainer();
-            this.buildPagination(this.jobCardsContainer);
+            if(!this.shortList){
+                this.buildPagination(this.jobCardsContainer);
+            }
             if (!addPage) {
                 this.parent.append(this.jobCardsContainer);
             }
@@ -319,7 +322,7 @@ class JobList {
                 .then(response => {
                     console.log(response);
                     this.resetContianer();
-                    let data =response.results;
+                    let data = this.shortList ? response.results.slice(0,5) : response.results;
                     //this.jobData = this.jobData.concat(data);
                     this.jobData = data;
                     this.buildCards(data, addPage);

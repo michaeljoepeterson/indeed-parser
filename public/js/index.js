@@ -88,9 +88,11 @@ class JobSearchApp{
     }
 
     initJobList = (province,city) =>{
+        let shortList = document.URL.includes('short-list') ? true : false;
         let jobOptions = {
             jobResultsId:'indeed-results',
-            parentClass:'job-list-container'
+            parentClass:'job-list-container',
+            shortList
         };
         if(city && province){
             let radius = $('#radius').val();
