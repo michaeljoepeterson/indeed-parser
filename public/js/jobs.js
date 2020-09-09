@@ -27,6 +27,10 @@ class JobList {
         this.pageRange = 5;
         this.jobModal = null;
         this.shortList = options.shortList ? options.shortList : false;
+        this.addPageNumbers = options.addPageNumbers ? options.addPageNumbers : false;
+        this.previousLastJob = null;
+        this.previousPage = null;
+        this.pageAttempts = 0;
         
         this.render();
     }
@@ -250,7 +254,9 @@ class JobList {
                 </button>
             </div>
         </div>`);
-        this.addPageNumbers(pageContainer);
+        if(this.addPageNumbers){
+            this.addPageNumbers(pageContainer);
+        }
         this.initPageListeners(pageContainer);
         this.setActivePage(pageContainer);
 
@@ -258,14 +264,19 @@ class JobList {
     }
 
     changePage(page,adjustPage){
+        let newPage = this.currentPage + adjustPage;
+        this.previousPage = this.currentPage;
         if(page){
             this.currentPage = page;
         }
         //left and right clicks
-        if(adjustPage){
-            this.currentPage += adjustPage;
+        if(adjustPage && newPage >= 0){
+            this.currentPage = newPage;
         }
-        
+        else{
+            this.currentPage = this.previousPage
+        }
+
         this.render();
     }
 
@@ -301,6 +312,43 @@ class JobList {
         let url = `/api/search?city=${this.urlOptions.city}&province=${this.urlOptions.province}&radius=25&page=${pageVal}`;
         return url;
     }
+
+    getRndInteger(min, max) {
+     return Math.floor(Math.random() * (max - min + 1) ) + min;
+    }
+    //could be more robust by checking rand jobs
+    checkForJobDiff(currentList){
+        
+        if(this.jobData.length > 0){
+            if(this.jobData.length === currentList.length){
+                let randInt = this.getRndInteger(0,this.jobData.length - 1);
+                let oldJob = this.jobData[0];
+                let currentJob = currentList.length > 0 ? currentList[0] : null;
+                if(!currentJob){
+                    return true;
+                }
+                let randOld = this.jobData[randInt];
+                let randCurrent = currentList[randInt];
+                if(oldJob.company !== currentJob.company && oldJob.jobtitle !== currentJob.jobtitle){
+                    return true;
+                }
+
+                if(randOld.company !== randCurrent.company && randOld.jobtitle !== randCurrent.jobtitle){
+                    return true;
+                }
+            }
+            else{
+                return true;
+            }
+        }
+
+        if(this.jobData.length === 0){
+            return true;
+        }
+
+        return false;
+    }
+
     //placeholder for ajax calls
     //need seperate function for appending jobs
     getJobs(page, addPage) {
@@ -323,9 +371,16 @@ class JobList {
                     console.log(response);
                     this.resetContianer();
                     let data = this.shortList ? response.results.slice(0,5) : response.results;
+                    let hasDiff = !this.shortList ? this.checkForJobDiff(data) : false;
                     //this.jobData = this.jobData.concat(data);
-                    this.jobData = data;
-                    this.buildCards(data, addPage);
+                    //no diff so no reassignemnt
+                    if(!hasDiff){
+                        this.currentPage = this.previousPage;
+                    }
+                    else{
+                        this.jobData = data;
+                    }
+                    this.buildCards(this.jobData, addPage);
                     if(this.useMap){
                         this.mapOptions.jobData = addPage ? this.jobData : response.data.results;
                         this.mapInterface = new MapInterface(this.mapOptions);

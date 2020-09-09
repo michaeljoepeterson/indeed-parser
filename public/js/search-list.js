@@ -200,7 +200,6 @@ SearchList.prototype.controlDropdown = function(event){
         const enter = 'enter';
         const escape = 'escape';
         let key = event.key.toLowerCase();
-        console.log(event.key);
         
         switch(key){
             case keyUp:
@@ -302,7 +301,6 @@ SearchList.prototype.filterList = function(event,value){
 
 SearchList.prototype.findResults = function(event){
     if(this.isFocused){
-        console.log('key down');
         //set initial event
         if(!this.debounceTimeout){
             this.debounceTimeout = setTimeout(function(){
