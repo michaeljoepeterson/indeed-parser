@@ -32,7 +32,7 @@ class JobSearchApp{
         this.loader.addClass('hide');
     }
 
-    submitSearch= (event) => {
+    submitSearch = (event) => {
         event.preventDefault();
         let province = this.provinceSearch.getValue();
         let city = this.citySearch.getValue();

@@ -35,6 +35,17 @@ class JobList {
         this.render();
     }
 
+    stripScripts(s) {
+        var div = document.createElement('div');
+        div.innerHTML = s;
+        var scripts = div.getElementsByTagName('script');
+        var i = scripts.length;
+        while (i--) {
+          scripts[i].parentNode.removeChild(scripts[i]);
+        }
+        return div.innerHTML;
+      }
+
     resetContianer(){
         this.parent.empty();
         if(this.jobCardsContainer){
@@ -159,6 +170,7 @@ class JobList {
         moreLinkButton.click((event) => {
             this.openDescriptionModal(index);
         });
+        decodedDesc = this.stripScripts(decodedDesc);
         this.descriptions.push({
             description:decodedDesc
         });
@@ -308,8 +320,14 @@ class JobList {
     }
 
     buildUrl(){
-        let pageVal = this.currentPage ? this.currentPage * 10 : 0
-        let url = `/api/search?city=${this.urlOptions.city}&province=${this.urlOptions.province}&radius=25&page=${pageVal}`;
+        let pageVal = this.currentPage ? this.currentPage * 10 : 0;
+        let url;
+        if(!this.urlOptions.customUrl){
+            url = `/api/search?city=${this.urlOptions.city}&province=${this.urlOptions.province}&radius=25&page=${pageVal}`;
+        }
+        else{
+            url = `${this.urlOptions.customUrl}/api/search?city=${this.urlOptions.city}&province=${this.urlOptions.province}&radius=25&page=${pageVal}`;
+        }
         return url;
     }
 
@@ -371,7 +389,7 @@ class JobList {
                     console.log(response);
                     this.resetContianer();
                     let data = this.shortList ? response.results.slice(0,5) : response.results;
-                    let hasDiff = !this.shortList ? this.checkForJobDiff(data) : false;
+                    let hasDiff = !this.shortList ? this.checkForJobDiff(data) : true;
                     //this.jobData = this.jobData.concat(data);
                     //no diff so no reassignemnt
                     if(!hasDiff){
