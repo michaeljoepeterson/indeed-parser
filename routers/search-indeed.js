@@ -8,7 +8,8 @@ router.get('/',async (req,res,next) => {
     let {city,province,radius,page} = req.query;
     console.log(req.query);
     let query = !city ? defaultQuery : `q=security+guard&l=${city}+${province}&radius=${radius}&start=${page}`;
-    let url = `https://ca.indeed.com/m/jobs?${query}`;
+    let url = `https://ca.indeed.com/jobs?${query}`;
+    console.log(url);
     try{
         let response = await axios.get(url);
         //console.log(response);
@@ -17,10 +18,14 @@ router.get('/',async (req,res,next) => {
         //console.log(cleanedData);
         //console.log(body$.html());
         let jobs =  []; 
-        $('.jobTitle').each(async function(i, item){
+        //select by attribute create jobs differently
+        $('a').each(async function(i, item){
+            const attributes = item.attribs;
+            console.log(attributes);
             let item$ = $(item);
-            let data = new IndeedData(item$);
-            jobs.push(data);
+            //console.log('job title?',item$.text());
+            //let data = new IndeedData(item$);
+            //jobs.push(data);
         });
         //console.log(jobs);
         jobs = await Promise.all (jobs.map(async(job) => {
@@ -33,7 +38,7 @@ router.get('/',async (req,res,next) => {
         });
     }
     catch(err){
-        console.log(err);
+        //console.log(err);
         next();
     }
 

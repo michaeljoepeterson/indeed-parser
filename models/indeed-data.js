@@ -23,7 +23,9 @@ class IndeedData{
     descriptionChecks = ['#jobDescriptionText']
 
     constructor(item$){
-        this.extractData(item$);
+        if(item$){
+            this.extractData(item$);
+        }
     }
 
     checkWage = (item$)  => {
@@ -37,7 +39,7 @@ class IndeedData{
     }
 
     extractData = (item$) => {
-        this.jobtitle = item$.find('a[rel="nofollow"]').text();
+        this.jobtitle = item$.find('a[data-tn-element="jobTitle"]').text();
         this.url = this.baseUrl + item$.find('a[rel="nofollow"]').attr('href');
         let isWage = this.checkWage(item$);
         if(isWage){
