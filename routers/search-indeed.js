@@ -19,19 +19,24 @@ router.get('/',async (req,res,next) => {
         //console.log(body$.html());
         let jobs =  []; 
         //select by attribute create jobs differently
-        $('a').each(async function(i, item){
-            const attributes = item.attribs;
-            console.log(attributes);
+        $('.jobtitle').each(async function(i, item){
             let item$ = $(item);
+            let initOptions = {
+                item:item,
+                type:'attribute',
+                item$
+            };
             //console.log('job title?',item$.text());
-            //let data = new IndeedData(item$);
+            let data = new IndeedData(initOptions);
             //jobs.push(data);
         });
         //console.log(jobs);
+        /*
         jobs = await Promise.all (jobs.map(async(job) => {
             await job.findData();
             return job.serialize();
         }));
+        */
         return res.json({
             code:200,
             results:jobs

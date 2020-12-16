@@ -15,6 +15,7 @@ class IndeedData{
     wage = null;
     baseUrl = BASE_URL;
     description = null;
+    attributeInitType = 'attribute';
 
     companyChecks = ['span[class=icl-u-textColor--success]','.icl-u-xs-mr--xs > a',{
         selector:'.jobsearch-DesktopStickyContainer-companyrating',
@@ -22,9 +23,13 @@ class IndeedData{
     }];
     descriptionChecks = ['#jobDescriptionText']
 
-    constructor(item$){
-        if(item$){
+    constructor(options){
+        let {type,item,item$} = options;
+        if(item$ && !type){
             this.extractData(item$);
+        }
+        if(item$ && type === this.attributeInitType){
+            this.extractByAttribute(item,item$)
         }
     }
 
@@ -47,6 +52,13 @@ class IndeedData{
         }
         this.formattedLocation = item$.nextAll('.location').html();
         this.date = item$.nextAll('.date').html();
+    }
+
+    extractByAttribute = (item,item$) =>{
+        //console.log(item.attribs);
+        console.log(item$.text());
+        let company = item$.parent().next('.sjcl');
+        console.log(company.text());
     }
     //to do combine functions
     checkCompany = ($) =>{
