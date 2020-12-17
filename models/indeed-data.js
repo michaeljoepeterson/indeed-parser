@@ -56,9 +56,27 @@ class IndeedData{
 
     extractByAttribute = (item,item$) =>{
         //console.log(item.attribs);
-        console.log(item$.text());
-        let company = item$.parent().next('.sjcl');
-        console.log(company.text());
+        this.jobtitle = item$.text().trim();
+        let locationContainer = item$.parent().next('.sjcl')
+        this.company = locationContainer.find('.company').text().trim();
+        let mouseDown = locationContainer.find('.company').html()//.attr('target');
+        let jobIdRegex = /fromjk=(.*?)\&/gi;
+        let matches = jobIdRegex.exec(mouseDown);
+        if(matches){
+            this.url = `${this.baseUrl}viewjob?jk=${matches[1]}`
+        }
+        else{
+            this.url = `${this.baseUrl}viewjob?jk=${item$.attr('id').replace('jl_','')}`
+        }
+        let dateContainer = item$.parent().siblings('.jobsearch-SerpJobCard-footer');
+        let date = dateContainer.find('.date');
+        this.date = date.text().trim();
+        console.log(this.jobtitle);
+        console.log(this.company);
+        console.log(this.url);
+        console.log(this.date);
+        //console.log(item$.attr('id').replace('jl_',''));
+        console.log('===============');
     }
     //to do combine functions
     checkCompany = ($) =>{

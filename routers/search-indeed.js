@@ -14,7 +14,7 @@ router.get('/',async (req,res,next) => {
         let response = await axios.get(url);
         //console.log(response);
         let cleanedData = response.data.trim().replace(/\r?\n|\r/g,'');
-        const $ = cheerio.load(cleanedData);
+        const $ = cheerio.load(response.data.trim());
         //console.log(cleanedData);
         //console.log(body$.html());
         let jobs =  []; 
@@ -28,22 +28,22 @@ router.get('/',async (req,res,next) => {
             };
             //console.log('job title?',item$.text());
             let data = new IndeedData(initOptions);
-            //jobs.push(data);
+            jobs.push(data);
         });
         //console.log(jobs);
-        /*
+        
         jobs = await Promise.all (jobs.map(async(job) => {
-            await job.findData();
+            //await job.findData();
             return job.serialize();
         }));
-        */
+        
         return res.json({
             code:200,
             results:jobs
         });
     }
     catch(err){
-        //console.log(err);
+        console.log(err);
         next();
     }
 
