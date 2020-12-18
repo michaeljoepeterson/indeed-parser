@@ -116,8 +116,12 @@ class JobList {
         jobLink.text(job.jobtitle);
 
         modal.find('.job-modal-company').html(job.company);
+
         if(job.wage){
             modal.find('.job-modal-wage').html(job.wage);
+        }
+        else{
+            modal.find('.job-modal-wage').empty();
         }
         modal.find('.modal-body').html(selectedDescription.description);
     }
