@@ -62,10 +62,18 @@ class IndeedData{
         let mouseDown = locationContainer.find('.company').html()//.attr('target');
         let jobIdRegex = /fromjk=(.*?)\&/gi;
         let matches = jobIdRegex.exec(mouseDown);
+        let recJobMatch = null;
+        console.log(mouseDown);
         if(matches){
             this.url = `${this.baseUrl}viewjob?jk=${matches[1]}`
         }
-        else{
+        if(!matches){
+            let recJobContainer = locationContainer.find('.recJobLoc');
+            let id = recJobContainer.attr('id').replace('recJobLoc_','');
+            this.url = `${this.baseUrl}viewjob?jk=${id}`;
+        }
+        else if(!matches && ! recJobMatch){
+            console.log('==============no match: ======================');
             this.url = `${this.baseUrl}viewjob?jk=${item$.attr('id').replace('jl_','')}`
         }
         let dateContainer = item$.parent().siblings('.jobsearch-SerpJobCard-footer');

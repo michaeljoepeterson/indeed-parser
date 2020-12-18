@@ -33,7 +33,7 @@ router.get('/',async (req,res,next) => {
         //console.log(jobs);
         
         jobs = await Promise.all (jobs.map(async(job) => {
-            //await job.findData();
+            await job.findData();
             return job.serialize();
         }));
         
