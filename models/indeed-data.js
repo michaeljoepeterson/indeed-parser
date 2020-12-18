@@ -63,7 +63,11 @@ class IndeedData{
         let jobIdRegex = /fromjk=(.*?)\&/gi;
         let matches = jobIdRegex.exec(mouseDown);
         let recJobMatch = null;
-        console.log(mouseDown);
+        let salaryContainer = item$.parent().nextAll('.salarySnippet');
+        if(salaryContainer.html()){
+            let salarySpan = salaryContainer.find('.salaryText');
+            this.wage = salarySpan.text();
+        }
         if(matches){
             this.url = `${this.baseUrl}viewjob?jk=${matches[1]}`
         }
@@ -83,6 +87,7 @@ class IndeedData{
         console.log(this.company);
         console.log(this.url);
         console.log(this.date);
+        console.log('salary: ',this.wage);
         //console.log(item$.attr('id').replace('jl_',''));
         console.log('===============');
     }
