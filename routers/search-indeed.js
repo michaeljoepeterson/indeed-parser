@@ -26,7 +26,8 @@ router.get('/',async (req,res,next) => {
                 type:'attribute',
                 item$
             };
-            //console.log('job title?',item$.text());
+            console.log('item&:',item$);
+            console.log('job title?',item$.text());
             let data = new IndeedData(initOptions);
             jobs.push(data);
         });
