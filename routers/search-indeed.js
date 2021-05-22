@@ -30,7 +30,7 @@ router.get('/',async (req,res,next) => {
             let data = new IndeedData(initOptions);
             jobs.push(data);
         });
-        //console.log(jobs);
+        console.log(jobs);
         
         jobs = await Promise.all (jobs.map(async(job) => {
             await job.findData();
